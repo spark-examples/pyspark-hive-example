@@ -36,7 +36,7 @@ sampleDF.createOrReplaceTempView("sampleView")
 spark.sql("CREATE DATABASE IF NOT EXISTS ct")
 
 # Create a Table naming as sampleTable under CT database.
-spark.sql("CREATE TABLE ct.sampleTable (number Int, word String)")
+spark.sql("CREATE TABLE ct.sampleTable (id Int, name String, age Int, gender String)")
 
 # Insert into sampleTable using the sampleView. 
 spark.sql("INSERT INTO TABLE ct.sampleTable  SELECT * FROM sampleView")
