@@ -21,6 +21,7 @@ spark = SparkSession \
     .enableHiveSupport() \
     .getOrCreate()
 
+
 columns = ["id", "name","age","gender"]
 
 # Create DataFrame 
@@ -28,9 +29,17 @@ data = [(1, "James",30,"M"), (2, "Ann",40,"F"),
     (3, "Jeff",41,"M"),(4, "Jennifer",20,"F")]
 sampleDF = spark.sparkContext.parallelize(data).toDF(columns)
 
-# Create Hive Internal table
-sampleDF.write.mode('overwrite') \
-          .saveAsTable("employee")
+# Create temporary view
+sampleDF.createOrReplaceTempView("sampleView")
 
-df = spark.read.table("employee")
-df.show()
+# Create a Database CT
+spark.sql("CREATE DATABASE IF NOT EXISTS ct")
+
+# Create a Table naming as sampleTable under CT database.
+spark.sql("CREATE TABLE ct.sampleTable (number Int, word String)")
+
+# Insert into sampleTable using the sampleView. 
+spark.sql("INSERT INTO TABLE ct.sampleTable  SELECT * FROM sampleView")
+
+# Lets view the data in the table
+spark.sql("SELECT * FROM ct.sampleTable").show()
